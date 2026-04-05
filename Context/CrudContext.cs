@@ -10,6 +10,7 @@ namespace CRUD_API.Context
         }
         public DbSet<TeacherClass> Teachers { get; set; }
         public DbSet<DepartmentClass> Departments { get; set; }
+        public DbSet<UserClass> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
