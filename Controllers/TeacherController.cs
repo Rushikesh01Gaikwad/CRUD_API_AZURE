@@ -23,7 +23,7 @@ namespace CRUD_API.Controllers
         {
             try
             {
-                var data = await _Context.Teachers.ToListAsync();
+                var data = await _Context.Teachers.Include(s =>s.Department).ToListAsync();
                 rtn.Data = data;
                 rtn.Message = "Data Fetched successfully";
             }
@@ -61,7 +61,7 @@ namespace CRUD_API.Controllers
             return Ok(rtn);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] TeacherClass teacher)
         {
             try
@@ -86,7 +86,7 @@ namespace CRUD_API.Controllers
             return Ok(rtn);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try

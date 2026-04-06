@@ -63,7 +63,7 @@ namespace CRUD_API.Controllers
             return Ok(rtn);
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] DepartmentClass department)
         {
             try
@@ -92,7 +92,7 @@ namespace CRUD_API.Controllers
             return Ok(rtn);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try

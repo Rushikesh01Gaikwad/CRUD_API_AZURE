@@ -19,14 +19,25 @@ namespace CRUD_API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password)
+        public async Task<IActionResult> Login([FromBody] UserClass loginUser)
         {
             try
             {
-                if (username == "admin" && password == "password")
+                var user = await _Context.Users
+                    .FirstOrDefaultAsync(u =>
+                        u.Email == loginUser.Email &&
+                        u.Password == loginUser.Password);
+
+                if (user != null)
                 {
                     rtn.Message = "Login successful";
-                    rtn.Data = new { Token = "fake-jwt-token" };
+                    rtn.Data = new
+                    {
+                        user.Id,
+                        user.Name,
+                        user.Email,
+                        Token = "fake-jwt-token" // later replace with real JWT
+                    };
                 }
                 else
                 {
@@ -40,6 +51,7 @@ namespace CRUD_API.Controllers
                 rtn.Status = 0;
                 rtn.Exception = ex.Message;
             }
+
             return Ok(rtn);
         }
 
