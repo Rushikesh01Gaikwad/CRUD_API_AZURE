@@ -46,6 +46,7 @@ namespace CRUD_API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+            app.UseStaticFiles();
 
 
             app.MapControllers();
