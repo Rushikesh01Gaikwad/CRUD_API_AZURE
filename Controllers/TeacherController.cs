@@ -73,7 +73,9 @@ namespace CRUD_API.Controllers
                     rtn.Status = 0;
                     return Ok(rtn);
                 }
-                _Context.Entry(existingTeacher).CurrentValues.SetValues(teacher);
+                //_Context.Entry(existingTeacher).CurrentValues.SetValues(teacher);
+                teacher.Department = null;
+                _Context.Teachers.Update(teacher);
                 await _Context.SaveChangesAsync();
                 rtn.Message = "Data Updated successfully";
             }

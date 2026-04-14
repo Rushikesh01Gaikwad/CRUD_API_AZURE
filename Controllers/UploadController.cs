@@ -55,5 +55,59 @@ namespace CRUD_API.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateTeacherPhoto(IFormFile file, string oldFileName)
+        {
+            try
+            {
+                if (file == null || file.Length == 0)
+                {
+                    rtn.Status = 0;
+                    rtn.Message = "File not found!";
+                    return Ok(rtn);
+                }
+
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/teachers");
+
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                // ✅ Delete old file if exists
+                if (!string.IsNullOrEmpty(oldFileName))
+                {
+                    var oldFilePath = Path.Combine(folderPath, oldFileName);
+                    if (System.IO.File.Exists(oldFilePath))
+                    {
+                        System.IO.File.Delete(oldFilePath);
+                    }
+                }
+
+                // ✅ Save new file
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                var filePath = Path.Combine(folderPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                rtn.Status = 1;
+                rtn.Data = new
+                {
+                    FileName = fileName,
+                    filePath = "/uploads/teachers/" + fileName
+                };
+
+                return Ok(rtn);
+            }
+            catch (Exception ex)
+            {
+                rtn.Status = 0;
+                rtn.Message = ex.Message;
+                return Ok(rtn);
+            }
+        }
     }
 }
