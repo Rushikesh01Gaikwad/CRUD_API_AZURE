@@ -12,10 +12,12 @@ namespace CRUD_API.Controllers
     {
         private ReturnData rtn = new ReturnData();
         private readonly CrudContext _Context;
+        private readonly EmailService _emailService;
 
-        public TeacherController(CrudContext context)
+        public TeacherController(CrudContext context, EmailService emailService)
         {
             _Context = context;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -49,7 +51,22 @@ namespace CRUD_API.Controllers
                     return Ok(rtn);
                 }
                 _Context.Teachers.Add(teacher);
+                rtn.Data = teacher;
                 await _Context.SaveChangesAsync();
+                //await _emailService.SendEmailAsync(
+                //    teacher.Email, 
+                //    "Welcome to Our System",
+                //    $"Hello {teacher.Name},\n\nWelcome! Your account has been created successfully."
+                //); //slower process
+
+                _ = Task.Run(async () =>
+                {
+                    await _emailService.SendEmailAsync(
+                        teacher.Email,
+                        "Welcome to Our System",
+                        $"Hello {teacher.Name}, Welcome!"
+                    );
+                }); //fast process
                 rtn.Message = "Data Added successfully";
             }
             catch (Exception ex)

@@ -1,5 +1,6 @@
 
 using CRUD_API.Context;
+using CRUD_API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace CRUD_API
@@ -24,13 +25,21 @@ namespace CRUD_API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll", builder =>
+                //options.AddPolicy("AllowAll", builder =>
+                //{
+                //    builder.AllowAnyOrigin()
+                //           .AllowAnyMethod()
+                //           .AllowAnyHeader();
+                //});
+                options.AddPolicy("AllowFrontend",
+                policy =>
                 {
-                    builder.AllowAnyOrigin()
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
+                    policy.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
                 });
             });
+            builder.Services.AddHttpClient<EmailService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -41,7 +50,8 @@ namespace CRUD_API
             //}
 
 
-            app.UseCors("AllowAll");
+            //app.UseCors("AllowAll");
+            app.UseCors("AllowFrontend");
 
             app.UseHttpsRedirection();
 
