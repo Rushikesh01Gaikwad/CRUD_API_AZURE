@@ -59,14 +59,14 @@ namespace CRUD_API.Controllers
                 //    $"Hello {teacher.Name},\n\nWelcome! Your account has been created successfully."
                 //); //slower process
 
-                _ = Task.Run(async () =>
-                {
-                    await _emailService.SendEmailAsync(
-                        teacher.Email,
-                        "Welcome to Our System",
-                        $"Hello {teacher.Name}, Welcome!"
-                    );
-                }); //fast process
+                //_ = Task.Run(async () =>
+                //{
+                //    await _emailService.SendEmailAsync(
+                //        teacher.Email,
+                //        "Welcome to Our System",
+                //        $"Hello {teacher.Name}, Welcome!"
+                //    );
+                //}); //fast process
                 rtn.Message = "Data Added successfully";
             }
             catch (Exception ex)

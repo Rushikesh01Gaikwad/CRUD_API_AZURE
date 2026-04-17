@@ -10,10 +10,13 @@ namespace CRUD_API.Controllers
     {
         private ReturnData rtn = new ReturnData();
         private readonly CrudContext _Context;
+        private readonly BlobService _blobService;
 
-        public UploadController(CrudContext context)
+
+        public UploadController(CrudContext context, BlobService blobService)
         {
             _Context = context;
+            _blobService = blobService;
         }
 
         [HttpPost]
@@ -28,22 +31,12 @@ namespace CRUD_API.Controllers
                     return Ok(rtn);
                 }
 
-                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/teachers");
+                var fileUrl = await _blobService.UploadFileAsync(file);
 
-                if (!Directory.Exists(folderPath))
+                rtn.Data = new
                 {
-                    Directory.CreateDirectory(folderPath);
-                }
-
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                var filePath = Path.Combine(folderPath, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-
-                rtn.Data = new { FileName = fileName, filePath = "/uploads/teachers/" + fileName };
+                    filePath = fileUrl // 🔥 Azure URL
+                };
 
                 return Ok(rtn);
             }
@@ -56,7 +49,7 @@ namespace CRUD_API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateTeacherPhoto(IFormFile file, string oldFileName)
+        public async Task<IActionResult> UpdateTeacherPhoto(IFormFile file, string oldFileUrl)
         {
             try
             {
@@ -67,37 +60,18 @@ namespace CRUD_API.Controllers
                     return Ok(rtn);
                 }
 
-                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/teachers");
-
-                if (!Directory.Exists(folderPath))
+                // 🔥 Delete old file from blob
+                if (!string.IsNullOrEmpty(oldFileUrl))
                 {
-                    Directory.CreateDirectory(folderPath);
+                    await _blobService.DeleteFileAsync(oldFileUrl);
                 }
 
-                // ✅ Delete old file if exists
-                if (!string.IsNullOrEmpty(oldFileName))
-                {
-                    var oldFilePath = Path.Combine(folderPath, oldFileName);
-                    if (System.IO.File.Exists(oldFilePath))
-                    {
-                        System.IO.File.Delete(oldFilePath);
-                    }
-                }
-
-                // ✅ Save new file
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                var filePath = Path.Combine(folderPath, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
+                var fileUrl = await _blobService.UploadFileAsync(file);
 
                 rtn.Status = 1;
                 rtn.Data = new
                 {
-                    FileName = fileName,
-                    filePath = "/uploads/teachers/" + fileName
+                    filePath = fileUrl
                 };
 
                 return Ok(rtn);

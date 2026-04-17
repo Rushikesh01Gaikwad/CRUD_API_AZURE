@@ -25,21 +25,25 @@ namespace CRUD_API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddCors(options =>
             {
-                //options.AddPolicy("AllowAll", builder =>
-                //{
-                //    builder.AllowAnyOrigin()
-                //           .AllowAnyMethod()
-                //           .AllowAnyHeader();
-                //});
-                options.AddPolicy("AllowFrontend",
-                policy =>
+                options.AddPolicy("AllowFrontend", builder =>
                 {
-                    policy.WithOrigins("http://localhost:4200")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
+                    builder.WithOrigins(
+                         "http://localhost:4200",
+                         "https://witty-wave-0a543a900.7.azurestaticapps.net"
+                     )
+                     .AllowAnyHeader()
+                     .AllowAnyMethod();
                 });
+                //options.AddPolicy("AllowFrontend",
+                //policy =>
+                //{
+                //    policy.WithOrigins("http://localhost:4200")
+                //          .AllowAnyHeader()
+                //          .AllowAnyMethod();
+                //});
             });
             builder.Services.AddHttpClient<EmailService>();
+            builder.Services.AddScoped<BlobService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
