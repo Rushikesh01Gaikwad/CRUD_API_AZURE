@@ -29,7 +29,7 @@ namespace CRUD_API
                 {
                     builder.WithOrigins(
                          "http://localhost:4200",
-                         "https://witty-wave-0a543a900.7.azurestaticapps.net"
+                         "https://agreeable-bush-0a65fb500.7.azurestaticapps.net"
                      )
                      .AllowAnyHeader()
                      .AllowAnyMethod();
