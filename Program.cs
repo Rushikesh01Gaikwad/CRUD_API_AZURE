@@ -44,6 +44,7 @@ namespace CRUD_API
             });
             builder.Services.AddHttpClient<EmailService>();
             builder.Services.AddScoped<BlobService>();
+            builder.Services.AddScoped<AiService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
