@@ -2,6 +2,6 @@
 {
     public class ChatRequest
     {
-        public string Question { get; set; } = "";
+        public string Message { get; set; }
     }
 }
